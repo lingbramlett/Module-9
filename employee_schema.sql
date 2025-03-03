@@ -1,49 +1,75 @@
--- Creating Departments Table
-CREATE TABLE departments (
-    dept_no CHAR(4) PRIMARY KEY,
-    dept_name VARCHAR(40) NOT NULL
+-- Exported from QuickDBD: https://www.quickdatabasediagrams.com/
+-- Link to schema: https://app.quickdatabasediagrams.com/#/d/P9jczF
+-- NOTE! If you have used non-SQL datatypes in your design, you will have to change these here.
+
+
+CREATE TABLE "Departments" (
+    "dept_no" VARCHAR   NOT NULL,
+    "dept_name" VARCHAR   NOT NULL,
+    CONSTRAINT "pk_Departments" PRIMARY KEY (
+        "dept_no"
+     )
 );
 
--- Creating Titles Table
-CREATE TABLE titles (
-    title_id VARCHAR(10) PRIMARY KEY,
-    title VARCHAR(50) NOT NULL
+CREATE TABLE "Employees" (
+    "emp_no" INTEGER   NOT NULL,
+    "title_id" VARCHAR   NOT NULL,
+    "birth_date" DATE   NOT NULL,
+    "first_name" VARCHAR   NOT NULL,
+    "last_name" VARCHAR   NOT NULL,
+    "sex" CHAR(1)   NOT NULL,
+    "hire_date" DATE   NOT NULL,
+    CONSTRAINT "pk_Employees" PRIMARY KEY (
+        "emp_no"
+     )
 );
 
--- Creating Employees Table
-CREATE TABLE employees (
-    emp_no INT PRIMARY KEY,
-    birth_date DATE NOT NULL,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    gender ENUM('M', 'F') NOT NULL,
-    hire_date DATE NOT NULL,
-    emp_title_id VARCHAR(10),
-    FOREIGN KEY (emp_title_id) REFERENCES titles(title_id)
+CREATE TABLE "EmployeeDepartments" (
+    "emp_no" INTEGER   NOT NULL,
+    "dept_no" VARCHAR   NOT NULL,
+    CONSTRAINT "pk_EmployeeDepartments" PRIMARY KEY (
+        "emp_no","dept_no"
+     )
 );
 
--- Creating Salaries Table
-CREATE TABLE salaries (
-    emp_no INT,
-    salary INT NOT NULL,
-    PRIMARY KEY (emp_no, salary),
-    FOREIGN KEY (emp_no) REFERENCES employees(emp_no)
+CREATE TABLE "Titles" (
+    "title_id" VARCHAR   NOT NULL,
+    "title" VARCHAR   NOT NULL,
+    CONSTRAINT "pk_Titles" PRIMARY KEY (
+        "title_id"
+     )
 );
 
--- Creating Department Employees Table
-CREATE TABLE dept_emp (
-    emp_no INT,
-    dept_no CHAR(4),
-    PRIMARY KEY (emp_no, dept_no),
-    FOREIGN KEY (emp_no) REFERENCES employees(emp_no),
-    FOREIGN KEY (dept_no) REFERENCES departments(dept_no)
+CREATE TABLE "DepartmentManagers" (
+    "dept_no" VARCHAR   NOT NULL,
+    "emp_no" INTEGER   NOT NULL,
+    CONSTRAINT "pk_DepartmentManagers" PRIMARY KEY (
+        "dept_no","emp_no"
+     )
 );
 
--- Creating Department Managers Table
-CREATE TABLE dept_manager (
-    dept_no CHAR(4),
-    emp_no INT,
-    PRIMARY KEY (dept_no, emp_no),
-    FOREIGN KEY (dept_no) REFERENCES departments(dept_no),
-    FOREIGN KEY (emp_no) REFERENCES employees(emp_no)
+CREATE TABLE "Salaries" (
+    "emp_no" INTEGER   NOT NULL,
+    "salary" INTEGER   NOT NULL,
+    CONSTRAINT "pk_Salaries" PRIMARY KEY (
+        "emp_no"
+     )
 );
+
+ALTER TABLE "Employees" ADD CONSTRAINT "fk_Employees_title_id" FOREIGN KEY("title_id")
+REFERENCES "Titles" ("title_id");
+
+ALTER TABLE "EmployeeDepartments" ADD CONSTRAINT "fk_EmployeeDepartments_emp_no" FOREIGN KEY("emp_no")
+REFERENCES "Employees" ("emp_no");
+
+ALTER TABLE "EmployeeDepartments" ADD CONSTRAINT "fk_EmployeeDepartments_dept_no" FOREIGN KEY("dept_no")
+REFERENCES "Departments" ("dept_no");
+
+ALTER TABLE "DepartmentManagers" ADD CONSTRAINT "fk_DepartmentManagers_dept_no" FOREIGN KEY("dept_no")
+REFERENCES "Departments" ("dept_no");
+
+ALTER TABLE "DepartmentManagers" ADD CONSTRAINT "fk_DepartmentManagers_emp_no" FOREIGN KEY("emp_no")
+REFERENCES "Employees" ("emp_no");
+
+ALTER TABLE "Salaries" ADD CONSTRAINT "fk_Salaries_emp_no" FOREIGN KEY("emp_no")
+REFERENCES "Employees" ("emp_no");
